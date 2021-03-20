@@ -1,5 +1,6 @@
-### Intalaciones => npm i firebase y npm i react-router-dom
-
+### Intalaciones 
+### `npm i firebase` 
+### `npm i react-router-dom`
 
 
 # Getting Started with Create React App
