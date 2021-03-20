@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from './components/Navbar';
-
+import Login from './components/Login';
 /*
  ====================================
     IMPORTO EL REACT ROUTER
@@ -21,7 +21,7 @@ function App() {
           </Route>
           
           <Route path="/login">
-            login..
+            <Login />
           </Route>
 
           <Route path="/admin">
