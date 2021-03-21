@@ -1,4 +1,6 @@
-import React from 'react'
+import React from 'react';
+import {auth} from '../firebase';
+
 
 const Login = () => {
 
@@ -11,27 +13,58 @@ const Login = () => {
 /*====================================
        FUNCIONES
 ===================================*/
-const procesarDatos = (e) =>{
-    e.preventDefault();
+    const procesarDatos = (e) =>{
+        e.preventDefault();
 
-    if (!email.trim()) {
-        //console.log('Ingrese Correo electronico');
-        setError('Ingrese Correo electronico');
-        return;
+        if (!email.trim()) {
+            //console.log('Ingrese Correo electronico');
+            setError('Ingrese Correo electronico');
+            return;
+        }
+        if (!pass.trim()) {
+            //console.log('Ingrese Contraseña');
+            setError('Ingrese Contraseña')
+            return;
+        }
+        if(pass.length < 6){
+            //console.log('Contraseña mayor a 6 caracteres');
+            setError('Contraseña de  6 caracteres o mas');
+            return;
+        }
+        console.log('pasando todas las validaciones');
+        setError(null);
+
+        if (esRegistro) {
+            registrar()    ;
+        }
     }
-    if (!pass.trim()) {
-        //console.log('Ingrese Contraseña');
-        setError('Ingrese Contraseña')
-        return;
-    }
-    if(pass.length < 6){
-        //console.log('Contraseña mayor a 6 caracteres');
-        setError('Contraseña de  6 caracteres o mas');
-        return;
-    }
-    setError(null);
-    console.log('pasando todas las validaciones');
-}
+
+    //Hook (React.usecallback)
+    /**=========== {} [] Llamos  a los state que estoy usando ==========*/
+    const registrar = React.useCallback( async() => {
+
+        try {
+            
+            /** Con esto creo una nueva cuenta en FireBase. Paso las variables state */
+            const res = await auth.createUserWithEmailAndPassword(email,pass);
+            console.log(res.user);
+
+            
+        } catch (error) {
+            console.log(error);
+
+            /** Pinto el ERROR que tira firebase en la  pagina web 
+             * Personalizado con el if */
+            if (error.code === 'auth/invalid-email') {
+                setError('Email no valido');
+            }
+            if (error.code === 'auth/email-already-in-use') {
+                setError('Ese correo ya existe');
+            }
+        }
+    },[email, pass]) //paso los state 
+
+
 
 
     return (
