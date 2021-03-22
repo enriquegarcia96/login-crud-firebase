@@ -1,9 +1,11 @@
 import React from 'react';
 import {auth, db} from '../firebase';
 
+// Nos permite empujar al usuario  a diferentes rutas
+import {withRouter} from 'react-router-dom';
 
 
-const Login = () => {
+const Login = ( props ) => {
 
     const [email, setEmail] = React.useState('');
     const [pass, setPass] = React.useState('');
@@ -49,10 +51,17 @@ const Login = () => {
      * =================  */
     const login = React.useCallback( async ()=>{
 
-
         try {
             const res = await auth.signInWithEmailAndPassword(email,pass);
-            console.log(res.user);
+            //console.log(res.user);
+
+            /*  limpio los campos */
+            setEmail('');
+            setPass('');
+            setError(null);
+
+            //mando la ruta
+            props.history.push('/admin');
 
         } catch (error) {
             console.log(error);
@@ -67,7 +76,8 @@ const Login = () => {
             }
         }
 
-    },[email,pass]);//paso los state 
+    },[email,pass, props.history]);//paso los state 
+
 
     //Hook (React.usecallback)
     /**=========== {} [] Llamos  a los state que estoy usando ==========*/
@@ -90,6 +100,8 @@ const Login = () => {
             setPass('');
             setError(null);
 
+            props.history.push('/admin');//mando al usuario a la pagina de admmin
+
         } catch (error) {
             console.log(error);
 
@@ -102,7 +114,7 @@ const Login = () => {
                 setError('Ese correo ya existe');
             }
         }
-    },[email, pass]) //paso los state 
+    },[email, pass, props.history]) //paso los state 
 
 
 
@@ -161,4 +173,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default withRouter (Login)
