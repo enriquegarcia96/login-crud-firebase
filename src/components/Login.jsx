@@ -1,5 +1,6 @@
 import React from 'react';
-import {auth} from '../firebase';
+import {auth, db} from '../firebase';
+
 
 
 const Login = () => {
@@ -7,7 +8,7 @@ const Login = () => {
     const [email, setEmail] = React.useState('');
     const [pass, setPass] = React.useState('');
     const [error, setError] = React.useState(null);
-    const [esRegistro, setRegistro] = React.useState(true);
+    const [esRegistro, setRegistro] = React.useState(false);
 
 
 /*====================================
@@ -36,8 +37,37 @@ const Login = () => {
 
         if (esRegistro) {
             registrar()    ;
+        }else{
+            login();
         }
     }
+
+    
+
+    /**=================
+     **  FUNCION DE LOGIN 
+     * =================  */
+    const login = React.useCallback( async ()=>{
+
+
+        try {
+            const res = await auth.signInWithEmailAndPassword(email,pass);
+            console.log(res.user);
+
+        } catch (error) {
+            console.log(error);
+            if (error.code === 'auth/invalid-email') {
+                setError('Correo no valido');
+            }
+            if (error.code === 'auth/user-not-found') {
+                setError('Email no registrado');
+            }
+            if (error.code === 'auth/wrong-password') {
+                setError('Contraseña incorrecta');
+            }
+        }
+
+    },[email,pass]);//paso los state 
 
     //Hook (React.usecallback)
     /**=========== {} [] Llamos  a los state que estoy usando ==========*/
@@ -47,9 +77,19 @@ const Login = () => {
             
             /** Con esto creo una nueva cuenta en FireBase. Paso las variables state */
             const res = await auth.createUserWithEmailAndPassword(email,pass);
+
+            /**=========== Creo la colecion usuario en FIREBASE =========== */
+            await db.collection('usuarios').doc(res.user.email).set({
+                email: res.user.email,
+                uid: res.user.uid
+            });//creo una colecion de usuarios
             console.log(res.user);
 
-            
+            /*  limpio los campos */
+            setEmail('');
+            setPass('');
+            setError(null);
+
         } catch (error) {
             console.log(error);
 
