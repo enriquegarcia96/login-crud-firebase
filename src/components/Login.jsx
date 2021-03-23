@@ -79,6 +79,9 @@ const Login = ( props ) => {
     },[email,pass, props.history]);//paso los state 
 
 
+    /**=================
+     **  FUNCION DE REGISTRAR 
+     * =================  */
     //Hook (React.usecallback)
     /**=========== {} [] Llamos  a los state que estoy usando ==========*/
     const registrar = React.useCallback( async() => {
@@ -93,7 +96,13 @@ const Login = ( props ) => {
                 email: res.user.email,
                 uid: res.user.uid
             });//creo una colecion de usuarios
-            console.log(res.user);
+
+            await db.collection(res.user.uid).add({
+                name: 'Tarea de ejemplo',
+                fecha: Date.now()
+            })
+
+            //console.log(res.user);
 
             /*  limpio los campos */
             setEmail('');
