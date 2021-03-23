@@ -1,6 +1,7 @@
 import React from 'react';
 import {auth} from '../firebase';
 import {withRouter} from 'react-router';
+import Firestore from './Firestore';
 
 const Admin = ( props ) => {
 
@@ -22,11 +23,12 @@ const Admin = ( props ) => {
 
     return (
         <div>
-            <h2>Ruta Protegida</h2>
+            <h3 className="text-center">Enrique García</h3>
+            <h3 className="text-center">Ruta Protegida</h3>
             {
                 //Evaluo el usuario si existe el usuario
                 user && (
-                    <h3>{user.email}</h3>
+                    <Firestore user={user} /> //con user tengo el uid del usuario de firestore
                 )
             }
         </div>
