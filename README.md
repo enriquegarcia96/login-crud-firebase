@@ -1,8 +1,8 @@
 ## Proyecto con react y firebase 
-##### aplicacion de un crud de tareas, login, registros de usuarios, iniciar sesion de usuarios con correo electronico 
+#### aplicacion de un crud de tareas, login, registros de usuarios, iniciar sesion de usuarios con correo electronico 
 
 
-# Instalaciones  ⚛️
+## Instalaciones  ⚛️
 ### `npm i firebase` 
 ### `npm i react-router-dom`
 
