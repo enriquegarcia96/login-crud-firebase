@@ -1,4 +1,4 @@
-### Proyecto con react ⚛️ y firebase 
+### Proyecto con REACT ⚛️ y FIREBASE 
 #### aplicacion de un crud de tareas, login, registros de usuarios, iniciar sesion de usuarios con correo electronico usando la base de datos de FireStore 
 
 
