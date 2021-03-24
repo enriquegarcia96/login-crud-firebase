@@ -1,5 +1,8 @@
-import React from 'react'
-import {db} from '../firebase'
+import React from 'react';
+import {db} from '../firebase';
+
+import moment from 'moment';
+import 'moment/locale/es'; //ha español la libreria de moment
 
 const Firestore = ( props ) => {
 
@@ -7,6 +10,10 @@ const Firestore = ( props ) => {
     const [tarea, setTarea] = React.useState('')
     const [modoEdicion, setModoEdicion] = React.useState(false)
     const [id, setId] = React.useState('')
+
+    //para que empuje otros documentos del Scroll
+    const [ ultimo, setUltimo ] = React.useState(null);
+    const [ desactivar, setDesactivar ] = React.useState(false);
   
   
     React.useEffect(() => {
@@ -14,21 +21,84 @@ const Firestore = ( props ) => {
       const obtenerDatos = async () => {
   
         try {
+          setDesactivar(true);
   
-          const data = await db.collection(props.user.uid).get()
+          /** Hago el llamado a la base de datos  */
+          const data = await db.collection(props.user.uid)
+            .limit(2)
+            .orderBy('fecha')
+            .get()
+
           const arrayData = data.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+
+          //traigo la ultima tarea, lo hago de forma dinamica
+          setUltimo(data.docs[data.docs.length - 1])
+
           console.log(arrayData)
           setTareas(arrayData)
-          
+
+          //hago el llamado a fireStore
+          const query = await db.collection( props.user.uid )
+            .limit(3)
+            .orderBy('fecha')
+            .startAfter((data.docs[data.docs.length - 1]))
+            .get()
+
+            /** Para saber si el documento viene vacio */
+            if (query.empty) {
+                console.log('¡NO hay mas documentos!');
+                setDesactivar(true);
+            }else{
+              setDesactivar(false);
+            }
         } catch (error) {
           console.log(error)
         }
-  
       }
-  
       obtenerDatos()
-  
-    }, [])
+    }, [props.user.uid])
+
+
+    //para que empuje otros documentos en la lista de tareas
+    const siguiente = async () =>{
+      
+      try {
+
+        //llamo la colecion de firebase
+        const data = await db.collection(props.user.uid)
+          .limit(2)
+          .orderBy('fecha')
+          .startAfter( ultimo )//que comience despues del documento ingresemos
+          .get()
+
+          const arrayData = data.docs.map( doc => ({ id: doc.id, ...doc.data() }) )
+          setTareas([
+            ...tareas,
+            ...arrayData
+          ])
+
+          //para que aparezca las siguientes tareas 
+          setUltimo(data.docs[ data.docs.length - 1 ])
+
+          const query = await db.collection( props.user.uid )
+            .limit(2)
+            .orderBy('fecha')
+            .startAfter((data.docs[data.docs.length - 1]))
+            .get()
+
+            /** Para saber si el documento viene vacio */
+            if (query.empty) {
+                console.log('¡NO hay mas documentos!');
+                setDesactivar(true);
+            }else{
+              setDesactivar(false);//desactica el botton
+            }
+
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
   
     const agregar = async (e) => {
       e.preventDefault()
@@ -50,16 +120,15 @@ const Firestore = ( props ) => {
           ...tareas,
           {...nuevaTarea, id: data.id}
         ])
-  
-        setTarea('')
-        
+        setTarea('') 
       } catch (error) {
         console.log(error)
       }
-  
       console.log(tarea)
     }
   
+
+
     const eliminar = async (id) => {
       try {
         
@@ -111,23 +180,34 @@ const Firestore = ( props ) => {
                         {
                         tareas.map(item => (
                             <li className="list-group-item list-group-item-success"  key={item.id}>
-                            {item.name}
+                            {item.name} - {moment(item.fecha).format('LLLL')} 
+                            
                             <button 
-                                className="btn btn-danger btn-sm float-right"
+                                className="btn btn-danger btn-sm float-right fas fa-trash-alt" 
                                 onClick={() => eliminar(item.id)}
+                                
                             >
-                                Eliminar
+                                
                             </button>
+                            
                             <button 
-                                className="btn btn-warning btn-sm float-right mr-2"
+                                className="btn btn-warning btn-sm float-right mr-2 far fa-edit"
                                 onClick={() => activarEdicion(item)}
                             >
-                                Editar
+                                
                             </button>
                             </li>
                         ))
                         }
                     </ul>
+                      <button 
+                          className="btn btn-info btn-block mt-2 btn-sm"
+                          onClick={ () => siguiente()}
+                          disabled={desactivar}
+
+                      >
+                          Siguiente...
+                      </button>
                 </div>
                 <div className="col-md-6">
                     <h3>

@@ -175,6 +175,17 @@ const Login = ( props ) => {
                                 }
                             
                         </button>
+                        {
+                            !esRegistro ? (
+                                <button 
+                                    className="btn btn-lg btn-danger btn-sm mt-2" 
+                                    type="button"
+                                    onClick={ () => props.history.push('/reset') }
+                                >
+                                    Recuperar Contraseña
+                                </button>
+                            ) : null
+                        }
                     </form>
                 </div>
             </div>
