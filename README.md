@@ -1,5 +1,5 @@
-### Proyecto con react y firebase ⚛️
-#### aplicacion de un crud de tareas, login, registros de usuarios, iniciar sesion de usuarios con correo electronico 
+### Proyecto con react ⚛️ y firebase https://emojis.slackmojis.com/emojis/images/1533724346/4435/firebase.png?1533724346
+#### aplicacion de un crud de tareas, login, registros de usuarios, iniciar sesion de usuarios con correo electronico usando la base de datos de FireStore 
 
 
 ## Instalaciones  ⚛️
